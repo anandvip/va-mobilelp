@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerology Phone Number Generator</title>
+    <style>
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #9c27b0;
+            --accent-color: #e1bee7;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: #fff;
+            --success-color: #4caf50;
+            --log-bg: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .input-card, .result-card, .history-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .life-path-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .life-path-number {
+            font-size: 8rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculation {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .result-title {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .phone-results-list {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .phone-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s;
+        }
+
+        .phone-result:last-child {
+            border-bottom: none;
+        }
+
+        .phone-result:hover {
+            background-color: var(--accent-color);
+        }
+
+        .phone-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .phone-calculation {
+            color: #666;
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .copy-btn {
+            background-color: transparent;
+            color: var(--secondary-color);
+            padding: 5px 10px;
+            border: 1px solid var(--secondary-color);
+            min-width: 70px;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .copy-all-btn {
+            margin-top: 20px;
+        }
+
+        .history-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-entry {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .history-entry:hover {
+            background-color: var(--accent-color);
+        }
+
+        .clear-btn {
+            background-color: #f44336;
+        }
+
+        .clear-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .output-log {
+            margin-top: 30px;
+            border-top: 2px dashed var(--accent-color);
+            padding-top: 20px;
+        }
+        
+        .log-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .output-container {
+            background-color: var(--log-bg);
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .clear-log-btn {
+            background-color: transparent;
+            color: var(--secondary-color);
+            padding: 5px 10px;
+            border: 1px solid var(--secondary-color);
+            font-size: 14px;
+        }
+        
+        .log-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-timestamp {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        
+        .log-success {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .life-path-number {
+                font-size: 5rem;
+            }
+            
+            .phone-result {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .phone-calculation {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Numerology Phone Number Generator</h1>
+            <p class="subtitle">Generate phone numbers compatible with your Life Path Number</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="input-card">
+            <h2>Enter Your Details</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="input-group">
+                    <label for="prefix">Phone Number Prefix:</label>
+                    <input type="text" id="prefix" placeholder="e.g. 702" maxlength="3" required>
+                </div>
+                <div class="input-group">
+                    <label for="count">Number of Results:</label>
+                    <select id="count">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <div class="actions">
+                <button id="generate-btn">Generate Compatible Numbers</button>
+            </div>
+        </div>
+
+        <div id="result-card" class="result-card hidden">
+            <div id="loading" class="loading hidden">
+                <div class="loader"></div>
+                <p>Generating numbers...</p>
+            </div>
+            
+            <div id="results-display">
+                <div class="life-path-display">
+                    <p>Your Life Path Number is</p>
+                    <h2 class="life-path-number" id="life-path-display">8</h2>
+                    <p class="calculation" id="lp-calculation">25.03.1969: 2+5 + 0+3 + 1+9+6+9 = 35 → 3+5 = 8</p>
+                </div>
+
+                <div class="results-container">
+                    <h3 class="result-title">Compatible Phone Numbers</h3>
+                    <div class="phone-results-list" id="phone-results">
+                        <!-- Results will be inserted here -->
+                    </div>
+                    <div class="actions">
+                        <button id="copy-all-btn" class="copy-all-btn">Copy All Numbers</button>
+                    </div>
+                </div>
+                
+                <div class="output-log">
+                    <div class="log-title">
+                        <h3>Generation Log</h3>
+                        <button id="clear-log-btn" class="clear-log-btn">Clear Log</button>
+                    </div>
+                    <div id="output-container" class="output-container">
+                        <p>No numbers generated yet. Click "Generate Compatible Numbers" to start.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-card">
+            <div class="history-title">
+                <h2>Search History</h2>
+                <button id="clear-history-btn" class="clear-btn">Clear History</button>
+            </div>
+            <div id="history-container">
+                <!-- History entries will be inserted here -->
+                <p id="no-history">No search history yet. Generate some numbers to see them here.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script>
+        // DOM Elements
+        const dobInput = document.getElementById('dob');
+        const prefixInput = document.getElementById('prefix');
+        const countSelect = document.getElementById('count');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultCard = document.getElementById('result-card');
+        const loadingDiv = document.getElementById('loading');
+        const resultsDisplay = document.getElementById('results-display');
+        const lifePathDisplay = document.getElementById('life-path-display');
+        const lpCalculation = document.getElementById('lp-calculation');
+        const phoneResults = document.getElementById('phone-results');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const historyContainer = document.getElementById('history-container');
+        const noHistory = document.getElementById('no-history');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const clearLogBtn = document.getElementById('clear-log-btn');
+        const outputContainer = document.getElementById('output-container');
+        const toast = document.getElementById('toast');
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', loadHistory);
+        generateBtn.addEventListener('click', generateNumbers);
+        copyAllBtn.addEventListener('click', copyAllNumbers);
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        clearLogBtn.addEventListener('click', clearLog);
+        prefixInput.addEventListener('input', function() {
+            // Allow only numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limit to 3 digits
+            if (this.value.length > 3) {
+                this.value = this.value.slice(0, 3);
+            }
+        });
+
+        // Function to calculate Life Path Number
+        function calculateLifePathNumber(dateString) {
+            // Parse the date
+            const date = new Date(dateString);
+            const day = date.getDate();
+            const month = date.getMonth() + 1; // Month is 0-indexed
+            const year = date.getFullYear();
+            
+            // Calculate each component
+            const daySum = reduceToSingleDigit(day);
+            const monthSum = reduceToSingleDigit(month);
+            const yearSum = reduceToSingleDigit(year);
+            
+            // Total sum
+            const totalSum = daySum + monthSum + yearSum;
+            const lifePathNumber = reduceToSingleDigit(totalSum);
+            
+            // Format the calculation for display
+            const formattedDate = `${day < 10 ? '0' + day : day}.${month < 10 ? '0' + month : month}.${year}`;
+            
+            // Create calculation string
+            let calculation = `${formattedDate}: `;
+            
+            // Day calculation
+            if (day >= 10) {
+                calculation += `${Math.floor(day/10)}+${day%10}`;
+            } else {
+                calculation += day;
+            }
+            
+            // Month calculation
+            calculation += " + ";
+            if (month >= 10) {
+                calculation += `${Math.floor(month/10)}+${month%10}`;
+            } else {
+                calculation += month;
+            }
+            
+            // Year calculation
+            calculation += " + ";
+            calculation += `${Math.floor(year/1000)}+${Math.floor((year%1000)/100)}+${Math.floor((year%100)/10)}+${year%10}`;
+            
+            // Final sum
+            let tempSum = daySum + monthSum + yearSum;
+            calculation += ` = ${tempSum}`;
+            
+            // If reduction is needed
+            if (tempSum > 9 && tempSum !== 11 && tempSum !== 22 && tempSum !== 33) {
+                calculation += ` → ${Math.floor(tempSum/10)}+${tempSum%10} = ${lifePathNumber}`;
+            }
+            
+            return {
+                number: lifePathNumber,
+                calculation: calculation
+            };
+        }
+
+        // Function to reduce a number to a single digit
+        function reduceToSingleDigit(num) {
+            // Special numbers in numerology: 11, 22, 33 (master numbers)
+            if (num === 11 || num === 22 || num === 33) {
+                return num;
+            }
+            
+            // Reduce to single digit
+            while (num > 9) {
+                let sum = 0;
+                while (num > 0) {
+                    sum += num % 10;
+                    num = Math.floor(num / 10);
+                }
+                num = sum;
+            }
+            return num;
+        }
+
+        // Function to add log entry
+        function addLogEntry(message, isSuccess = false) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            if (isSuccess) {
+                logEntry.classList.add('log-success');
+            }
+            
+            logEntry.innerHTML = `<span class="log-timestamp">[${timeString}]</span> ${message}`;
+            
+            // Add to container
+            if (outputContainer.querySelector('p')) {
+                outputContainer.innerHTML = ''; // Clear initial message
+            }
+            
+            outputContainer.appendChild(logEntry);
+            
+            // Scroll to bottom
+            outputContainer.scrollTop = outputContainer.scrollHeight;
+            
+            return logEntry; // Return the created element for potential further manipulation
+        }
+
+        // Function to clear the log
+        function clearLog() {
+            outputContainer.innerHTML = '<p>Log cleared. Generate numbers to see new output.</p>';
+        }
+
+        // Function to generate compatible phone numbers
+        function generateCompatibleNumbers(prefix, lifePathNumber, count) {
+            const compatibleNumbers = [];
+            let attemptCount = 0;
+            const maxAttempts = 10000; // Prevent infinite loop
+            
+            // Clear log and add initial message
+            addLogEntry(`Starting generation of ${count} phone numbers with prefix ${prefix} for Life Path Number ${lifePathNumber}...`);
+            
+            // Calculate sum of prefix digits
+            let prefixSum = 0;
+            for (let i = 0; i < prefix.length; i++) {
+                prefixSum += parseInt(prefix[i]);
+            }
+            
+            // Determine how many more digits needed after prefix
+            const remainingDigits = 10 - prefix.length;
+            addLogEntry(`Prefix sum: ${prefix} = ${prefixSum}. Generating ${remainingDigits} more digits...`);
+            
+            while (compatibleNumbers.length < count && attemptCount < maxAttempts) {
+                attemptCount++;
+                
+                // Log progress every 1000 attempts
+                if (attemptCount % 1000 === 0) {
+                    addLogEntry(`Processed ${attemptCount} combinations. Found ${compatibleNumbers.length} matches so far...`);
+                }
+                
+                // Generate random number for remaining digits
+                let remainingNumber = '';
+                for (let i = 0; i < remainingDigits; i++) {
+                    remainingNumber += Math.floor(Math.random() * 10);
+                }
+                
+                // Calculate sum of all digits
+                let numberSum = prefixSum;
+                let calculationStr = prefix.split('').join('+');
+                
+                for (let i = 0; i < remainingNumber.length; i++) {
+                    numberSum += parseInt(remainingNumber[i]);
+                    calculationStr += '+' + remainingNumber[i];
+                }
+                
+                // Check if the sum reduces to the life path number
+                const reducedSum = reduceToSingleDigit(numberSum);
+                let finalCalculation = `${calculationStr} = ${numberSum}`;
+                
+                if (numberSum > 9) {
+                    finalCalculation += ` → `;
+                    let tempNum = numberSum;
+                    while (tempNum > 9) {
+                        const firstDigit = Math.floor(tempNum / 10);
+                        const secondDigit = tempNum % 10;
+                        finalCalculation += `${firstDigit}+${secondDigit}`;
+                        tempNum = firstDigit + secondDigit;
+                        if (tempNum > 9) {
+                            finalCalculation += ` = ${tempNum} → `;
+                        } else {
+                            finalCalculation += ` = ${tempNum}`;
+                        }
+                    }
+                }
+                
+                if (reducedSum === lifePathNumber) {
+                    // Format the phone number
+                    const formattedNumber = formatPhoneNumber(prefix + remainingNumber);
+                    
+                    // Check if this number is already in our list
+                    if (!compatibleNumbers.some(num => num.number === formattedNumber)) {
+                        compatibleNumbers.push({
+                            number: formattedNumber,
+                            calculation: finalCalculation
+                        });
+                        
+                        // Log each successful match
+                        addLogEntry(`Found match: ${formattedNumber} (${compatibleNumbers.length}/${count})`, true);
+                    }
+                }
+            }
+            
+            // Final log
+            if (compatibleNumbers.length === count) {
+                addLogEntry(`Success! Generated ${count} compatible numbers after ${attemptCount} attempts.`, true);
+            } else {
+                addLogEntry(`Process completed. Found ${compatibleNumbers.length} compatible numbers after ${attemptCount} attempts.`);
+                if (compatibleNumbers.length < count) {
+                    addLogEntry(`Note: Reached maximum attempts (${maxAttempts}) before finding ${count} numbers.`);
+                }
+            }
+            
+            return compatibleNumbers;
+        }
+
+        // Format phone number as XXX-XXX-XXXX
+        function formatPhoneNumber(phoneNumber) {
+            return `${phoneNumber.substring(0, 3)}-${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6)}`;
+        }
+
+        // Main function to generate numbers
+        function generateNumbers() {
+            const dob = dobInput.value;
+            const prefix = prefixInput.value;
+            const count = parseInt(countSelect.value);
+            
+            // Validate inputs
+            if (!dob) {
+                alert('Please enter your date of birth');
+                return;
+            }
+            
+            if (!prefix || prefix.length !== 3) {
+                alert('Please enter a 3-digit phone number prefix');
+                return;
+            }
+            
+            // Show loading state
+            resultCard.classList.remove('hidden');
+            loadingDiv.classList.remove('hidden');
+            resultsDisplay.classList.add('hidden');
+            
+            // Use setTimeout to allow the UI to update before heavy computation
+            setTimeout(() => {
+                try {
+                    // Clear the output log and add initial entry
+                    clearLog();
+                    addLogEntry(`Starting calculation for date of birth: ${dob} and prefix: ${prefix}`);
+                    
+                    // Calculate life path number
+                    const lifePath = calculateLifePathNumber(dob);
+                    addLogEntry(`Calculated Life Path Number: ${lifePath.number} (${lifePath.calculation})`, true);
+                    
+                    // Update life path display
+                    lifePathDisplay.textContent = lifePath.number;
+                    lpCalculation.textContent = lifePath.calculation;
+                    
+                    // Generate compatible numbers
+                    addLogEntry(`Generating ${count} compatible phone numbers with prefix ${prefix}...`);
+                    const numbers = generateCompatibleNumbers(prefix, lifePath.number, count);
+                    
+                    // Display results
+                    displayResults(lifePath, numbers);
+                    
+                    // Save to history
+                    saveToHistory({
+                        dob: dob,
+                        prefix: prefix,
+                        lifePathNumber: lifePath.number,
+                        calculation: lifePath.calculation,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    addLogEntry(`Complete! Results displayed and saved to history.`, true);
+                    
+                    // Hide loading, show results
+                    loadingDiv.classList.add('hidden');
+                    resultsDisplay.classList.remove('hidden');
+                } catch (error) {
+                    // Handle any errors
+                    addLogEntry(`Error: ${error.message}`, false);
+                    loadingDiv.classList.add('hidden');
+                    resultsDisplay.classList.remove('hidden');
+                }
+            }, 100);
+        }
+
+        // Function to display results
+        function displayResults(lifePath, numbers) {
+            // Clear previous results
+            phoneResults.innerHTML = '';
+            
+            // Check if we have numbers
+            if (numbers.length === 0) {
+                const noResultsElement = document.createElement('div');
+                noResultsElement.className = 'phone-result';
+                noResultsElement.innerHTML = `
+                    <div class="phone-number">No matching numbers found</div>
+                    <div class="phone-calculation">Try a different prefix or increase the number of attempts.</div>
+                `;
+                phoneResults.appendChild(noResultsElement);
+                return;
+            }
+            
+            // Add new results
+            numbers.forEach((number, index) => {
+                const resultElement = document.createElement('div');
+                resultElement.className = 'phone-result';
+                resultElement.innerHTML = `
+                    <div class="phone-number">${number.number}</div>
+                    <div class="phone-calculation">Sum: ${number.calculation}</div>
+                    <button class="copy-btn" data-number="${number.number}">Copy</button>
+                `;
+                phoneResults.appendChild(resultElement);
+                
+                // Add event listener for copy button
+                resultElement.querySelector('.copy-btn').addEventListener('click', function() {
+                    copyToClipboard(this.getAttribute('data-number'));
+                });
+                
+                // Add to log
+                addLogEntry(`Result ${index+1}: ${number.number} - Added to results list`);
+            });
+            
+            // Make sure copy all button is visible
+            copyAllBtn.style.display = numbers.length > 0 ? 'block' : 'none';
+        }
+
+        // Function to copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showToast('Failed to copy to clipboard!');
+            });
+        }
+
+        // Function to copy all numbers
+        function copyAllNumbers() {
+            const allNumbers = Array.from(phoneResults.querySelectorAll('.phone-number'))
+                .map(el => el.textContent)
+                .join('\n');
+            
+            copyToClipboard(allNumbers);
+        }
+
+        // Function to show toast notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Function to save to history
+        function saveToHistory(data) {
+            let history = JSON.parse(localStorage.getItem('numerologyHistory') || '[]');
+            history.unshift(data); // Add at beginning
+            
+            // Limit history size
+            if (history.length > 20) {
+                history = history.slice(0, 20);
+            }
+            
+            localStorage.setItem('numerologyHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        // Function to load history
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('numerologyHistory') || '[]');
+            
+            // Clear container
+            historyContainer.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyContainer.appendChild(noHistory);
+                return;
+            }
+            
+            // Add history entries
+            history.forEach((entry, index) => {
+                const entryElement = document.createElement('div');
+                entryElement.className = 'history-entry';
+                
+                // Format date
+                const date = new Date(entry.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                entryElement.innerHTML = `
+                    <strong>Date of Birth:</strong> ${new Date(entry.dob).toLocaleDateString()} | 
+                    <strong>Prefix:</strong> ${entry.prefix} | 
+                    <strong>Life Path:</strong> ${entry.lifePathNumber} | 
+                    <strong>Searched:</strong> ${formattedDate}
+                `;
+                
+                // Add event listener to reload this search
+                entryElement.addEventListener('click', () => {
+                    dobInput.value = entry.dob;
+                    prefixInput.value = entry.prefix;
+                    generateNumbers();
+                });
+                
+                historyContainer.appendChild(entryElement);
+            });
+        }
+
+        // Function to clear history
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear your search history?')) {
+                localStorage.removeItem('numerologyHistory');
+                loadHistory();
+            }
+        }
+    </script>
+
+    <!--
+    Date created: May 03, 2025
+    Tool name: Claude 3.7 Sonnet
+    Prompt used: "Create a webpage for numerology tool which takes input from user about DOB, Phone starting series, Number of output of mobile numbers as per their life path number user wants. Display user life path number in huge font and also display the sum of all possible combinations. Clearly show sum of each output mobile number each digit reduced to life path number and each result has copy to clipboard and copy all output mobile number. Use local storage so user can come back and try another series maintain the log of different series tried by user."
+    
+    README.md:
+    # Numerology Phone Number Generator
+    
+    This web application generates phone numbers that are numerologically compatible with a user's Life Path Number. 
+    
+    ## Features:
+    
+    - Calculates the user's Life Path Number based on their date of birth
+    - Generates phone numbers starting with a specified prefix that reduce to the same Life Path Number
+    - Displays detailed calculations for transparency
+    - Allows copying individual numbers or all numbers at once
+    - Maintains a search history using local storage
+    - Responsive design for all devices
+    
+    The application uses modern HTML, CSS, and JavaScript with no external dependencies. It stores history in the browser's local storage for persistent data between sessions.
+    -->
+</body>
+</html>
